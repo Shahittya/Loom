@@ -3,12 +3,6 @@ import { createClient } from '@supabase/supabase-js'
 import { callGLM, buildSystemPrompt, detectEscalationLevel } from '@/lib/glm'
 import axios from 'axios'
 
-// Use service role for webhook (no auth context)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
 async function sendTelegramMessage(token: string, chatId: string | number, text: string) {
   await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
     chat_id: chatId,
@@ -18,6 +12,16 @@ async function sendTelegramMessage(token: string, chatId: string | number, text:
 }
 
 export async function POST(req: NextRequest) {
+  // Use service role for webhook (no auth context)
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.json({ ok: false, error: 'Supabase environment variables are missing' }, { status: 500 })
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
   const body = await req.json()
   const message = body?.message
   if (!message) return NextResponse.json({ ok: true })
