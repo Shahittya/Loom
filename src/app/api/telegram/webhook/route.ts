@@ -4,10 +4,23 @@ import { callGLM, buildSystemPrompt, detectEscalationLevel } from '@/lib/glm'
 import axios from 'axios'
 
 async function sendTelegramMessage(token: string, chatId: string | number, text: string) {
+  const safeText = String(text || '').trim().slice(0, 3900)
+
+  // First try without parse mode to avoid Telegram markdown parsing failures.
+  try {
+    await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
+      chat_id: chatId,
+      text: safeText || 'Sorry, I could not generate a reply just now.',
+    })
+    return
+  } catch (plainErr) {
+    // Fallback to an even simpler emergency message so the user still gets a response.
+    console.error('[Telegram] sendMessage failed (plain):', plainErr)
+  }
+
   await axios.post(`https://api.telegram.org/bot${token}/sendMessage`, {
     chat_id: chatId,
-    text,
-    parse_mode: 'Markdown',
+    text: 'Sorry, I am having a temporary issue. Please try again in a moment.',
   })
 }
 
