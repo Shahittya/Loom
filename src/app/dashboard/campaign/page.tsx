@@ -299,6 +299,7 @@ export default function CampaignPage() {
   const [running, setRunning] = useState(false)
   const [success, setSuccess] = useState(false)
   const [campaigns, setCampaigns] = useState<AdCampaign[]>([])
+  const [businessId, setBusinessId] = useState('')
   const adsRef = useRef<HTMLDivElement>(null)
 
   // Autonomous mode
@@ -332,13 +333,19 @@ export default function CampaignPage() {
       } catch {
         setLocation({ lat: 3.139, lng: 101.6869 })
       }
-      try {
-        const saved = localStorage.getItem('loom_campaigns')
-        if (saved) setCampaigns(JSON.parse(saved))
-      } catch { /* ignore */ }
     }
     init()
   }, [])
+
+  useEffect(() => {
+    if (!businessId) return
+    try {
+      const saved = localStorage.getItem(`loom_campaigns_${businessId}`)
+      setCampaigns(saved ? JSON.parse(saved) : [])
+    } catch {
+      setCampaigns([])
+    }
+  }, [businessId])
 
   async function loadItems() {
     try {
@@ -346,6 +353,7 @@ export default function CampaignPage() {
       if (!authData?.user) return
       const { data: biz } = await supabase.from('businesses').select('*').eq('user_id', authData.user.id).single()
       if (!biz) return
+      setBusinessId(biz.id)
       const { data } = await supabase.from('items').select('*').eq('business_id', biz.id).eq('available', true).order('created_at', { ascending: false })
       setItems(data || [])
       if (data && data.length > 0) setSelectedItem(data[0])
@@ -419,7 +427,9 @@ export default function CampaignPage() {
       }
       const updated = [newCampaign, ...campaigns]
       setCampaigns(updated)
-      localStorage.setItem('loom_campaigns', JSON.stringify(updated))
+      if (businessId) {
+        localStorage.setItem(`loom_campaigns_${businessId}`, JSON.stringify(updated))
+      }
       setRunning(false)
       setSuccess(true)
       setTimeout(() => {
@@ -432,7 +442,9 @@ export default function CampaignPage() {
   function deleteCampaign(id: string) {
     const updated = campaigns.filter(c => c.id !== id)
     setCampaigns(updated)
-    localStorage.setItem('loom_campaigns', JSON.stringify(updated))
+    if (businessId) {
+      localStorage.setItem(`loom_campaigns_${businessId}`, JSON.stringify(updated))
+    }
     toast.success('Campaign deleted')
   }
 

@@ -64,7 +64,7 @@ export default function HomePage() {
           </div>
           <div className="mt-12 sm:mt-16 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-xs sm:max-w-3xl mx-auto w-full">
             {[
-              { icon: MessageSquare, label: 'AI takes orders via Telegram', color: 'bg-blue-50 text-blue-600' },
+              { icon: MessageSquare, label: 'AI connect business via Telegram', color: 'bg-blue-50 text-blue-600' },
               { icon: TrendingUp, label: 'Smart marketing suggestions', color: 'bg-green-50 text-green-600' },
               { icon: ShoppingBag, label: 'Automated order tracking', color: 'bg-amber-50 text-amber-600' },
               { icon: Megaphone, label: 'AI-powered ad campaigns', color: 'bg-violet-50 text-violet-600' },

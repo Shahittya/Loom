@@ -4,6 +4,7 @@ import { ShoppingBag, Package, TrendingUp, ArrowUpRight, Clock } from 'lucide-re
 import Link from 'next/link'
 import { format } from 'date-fns'
 import { categoryLabels } from '@/lib/nav'
+import NewUserSetupBanner from '@/components/NewUserSetupBanner'
 
 export default async function DashboardPage() {
   const supabase = createClient()
@@ -40,6 +41,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="p-8">
+      <NewUserSetupBanner userId={user.id} />
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-extrabold text-gray-900">
