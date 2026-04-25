@@ -5,7 +5,7 @@ import img1 from '../../images/1.png'
 import img2 from '../../images/2.png'
 import img3 from '../../images/3.png'
 import img4 from '../../images/4.png'
-import { Bot, Zap, TrendingUp, ShoppingBag, MessageSquare, ArrowRight, Megaphone, Users, BarChart2, Brain, Lightbulb, RefreshCw, Layers } from 'lucide-react'
+import { Bot, Zap, TrendingUp, ShoppingBag, MessageSquare, ArrowRight, Megaphone, BarChart2, Brain, Lightbulb, RefreshCw, Layers } from 'lucide-react'
 
 export default function HomePage() {
   return (
