@@ -2,12 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { callGLM } from '@/lib/glm'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
 export async function POST(req: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    return NextResponse.json(
+      { error: 'Supabase environment variables are missing' },
+      { status: 500 }
+    )
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
   const { businessId, message, history } = await req.json()
   if (!businessId || !message?.trim()) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
